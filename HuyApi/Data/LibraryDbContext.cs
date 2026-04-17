@@ -14,6 +14,12 @@ namespace LibraryManagementAPI.Data
         public DbSet<BorrowCard> BorrowCards { get; set; }
         public DbSet<BorrowDetail> BorrowDetails { get; set; }
 
+        // Khai báo 5 bảng mới cho Database
+        public DbSet<Fine> Fines { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
 

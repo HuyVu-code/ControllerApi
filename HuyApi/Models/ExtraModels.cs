@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagementAPI.Models
 {
@@ -35,7 +36,9 @@ namespace LibraryManagementAPI.Models
 
     // 4. Danh phận cho Hệ thống Thông báo (Notifications)
     public class Notification
+
     {
+        [Key]
         public int NotifId { get; set; }
         public int UserId { get; set; }
         public string Title { get; set; } = string.Empty;
