@@ -1,102 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="vi">
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>SB Admin 2 - Register</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký | HuyStore.vn Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="src/css/auth.css">
 </head>
+<body>
 
-<body class="bg-gradient-primary">
-
-    <div class="container">
-
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
-                            </div>
-                            <form class="user">
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="First Name">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Last Name">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address">
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Repeat Password">
-                                    </div>
-                                </div>
-                                <a href="login.html" class="btn btn-primary btn-user btn-block">
-                                    Register Account
-                                </a>
-                                <hr>
-                                <a href="index.html" class="btn btn-google btn-user btn-block">
-                                    <i class="fab fa-google fa-fw"></i> Register with Google
-                                </a>
-                                <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                    <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                                </a>
-                            </form>
-                            <hr>
-                            <div class="text-center">
-                                <a class="small" href="forgot-password.html">Forgot Password?</a>
-                            </div>
-                            <div class="text-center">
-                                <a class="small" href="login.html">Already have an account? Login!</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="auth-wrapper">
+    <!-- Left: Brand Info -->
+    <div class="auth-side-brand" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(227, 24, 55, 0.9)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1000');">
+        <div>
+            <div class="auth-logo-circle" style="background: #fff; color: var(--primary);">H</div>
+            <div class="brand-content">
+                <h2>Trở thành thành viên của gia đình HuyStore</h2>
+                <p>Tạo tài khoản để tích điểm đổi quà, nhận mã giảm giá và lưu tủ sách yêu thích của riêng bạn.</p>
             </div>
         </div>
-
+        <div class="brand-footer">
+            © 2026 HuyStore.vn - Join the Community
+        </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Right: Register Form -->
+    <div class="auth-side-form">
+        <h1 class="auth-title">Đăng ký</h1>
+        <p class="auth-subtitle">Bắt đầu hành trình của bạn ngay!</p>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+        <div id="authAlert" class="alert-premium"></div>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+        <form id="registerForm">
+            <div class="form-group">
+                <input type="text" id="username" class="form-control-premium" placeholder="Tên đăng nhập" required>
+                <i class="fas fa-user"></i>
+            </div>
 
+            <div class="form-group">
+                <input type="email" id="email" class="form-control-premium" placeholder="Địa chỉ Email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" class="form-control-premium" placeholder="Mật khẩu" required>
+                <i class="fas fa-lock"></i>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="confirmPassword" class="form-control-premium" placeholder="Xác nhận mật khẩu" required>
+                <i class="fas fa-shield-alt"></i>
+            </div>
+
+            <button type="submit" class="btn-premium">TẠO TÀI KHOẢN</button>
+        </form>
+
+        <div class="auth-switch">
+            Bạn đã có tài khoản? <a href="login.html">Đăng nhập</a>
+        </div>
+    </div>
+</div>
+
+<script src="src/js/auth.js"></script>
 </body>
-
 </html>

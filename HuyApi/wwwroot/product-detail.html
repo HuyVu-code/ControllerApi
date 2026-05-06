@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - HuyStore.vn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="src/css/style.css">
+    <style>
+        :root { --neta-red: #da251c; --neta-orange: #ff9800; --neta-yellow-bg: #fff9e6; }
+        body { background-color: #f4f4f4; color: #333; font-size: 13px; }
+        
+        /* Nội dung chi tiết */
+        .white-card { background: white; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 20px; }
+        .product-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #000; }
+        .price-box-red { border-left: 5px solid var(--neta-red); background: #f9f9f9; padding: 15px 20px; margin-bottom: 20px; }
+        .neta-price { font-size: 32px; color: var(--neta-red); font-weight: bold; }
+        .market-price { color: #999; text-decoration: line-through; margin-left: 12px; }
+        
+        .promo-neta { border: 1px dashed var(--neta-red); background: var(--neta-yellow-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .promo-circle { background: var(--neta-orange); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; flex-shrink: 0; }
+
+        .qty-input { display: flex; border: 1px solid #ddd; width: 120px; border-radius: 4px; overflow: hidden; margin-bottom: 15px; }
+        .qty-input button { background: #f5f5f5; border: none; width: 35px; height: 35px; }
+        .qty-input input { border: none; width: 50px; text-align: center; font-weight: bold; border-left: 1px solid #ddd; border-right: 1px solid #ddd; }
+        
+        .btn-buy-now { background: var(--neta-orange); color: white; border: none; width: 100%; padding: 15px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 16px; }
+
+        .specs-table { width: 100%; border-top: 1px solid #eee; margin-top: 10px; }
+        .specs-table tr:nth-child(even) { background-color: #fafafa; }
+        .specs-table td { padding: 12px 8px; border-bottom: 1px solid #eee; }
+        .specs-lbl { color: #888; width: 45%; }
+        .specs-val { color: #333; font-weight: 500; }
+
+        .desc-fade { position: relative; max-height: 400px; overflow: hidden; padding: 25px 0; line-height: 1.8; color: #444; }
+        .fade-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(transparent, white); }
+        .btn-expand { border: 1px solid var(--neta-orange); background: white; color: var(--neta-orange); padding: 8px 60px; border-radius: 4px; font-weight: bold; margin-top: 15px; }
+
+        .review-item { padding: 15px 0; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<!-- ===== TOP BAR (Từ Index) ===== -->
+<div class="top-bar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex gap-3">
+            <a href="#"><i class="fab fa-facebook-f me-1"></i>Facebook</a>
+            <a href="#"><i class="fab fa-instagram me-1"></i>Instagram</a>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="#"><i class="fas fa-headset me-1"></i>Hỗ trợ</a>
+            <a href="#"><i class="fas fa-map-marker-alt me-1"></i>Hệ thống cửa hàng</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN HEADER (Từ Index) ===== -->
+<header class="main-header">
+    <div class="container d-flex align-items-center gap-4">
+        <a href="index.html" class="brand-logo text-decoration-none flex-shrink-0">
+            <div class="logo-box">H</div>
+            <span class="logo-text">HuyStore<span class="logo-vn">.vn</span></span>
+        </a>
+        <div class="search-wrapper flex-grow-1">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Tìm kiếm sách, tác giả, thể loại...">
+                <button class="btn-search">Tìm Kiếm</button>
+            </div>
+        </div>
+        <div class="header-actions d-flex align-items-center gap-3">
+            <div class="action-item"><i class="fas fa-phone-alt action-icon"></i><div><div class="action-label">Hotline</div><div class="action-value">0973 457 533</div></div></div>
+            <div class="action-item"><i class="far fa-user-circle action-icon"></i><div><div class="action-label">Tài khoản</div><div class="action-value">Đăng nhập</div></div></div>
+            <div class="action-item cart-action" onclick="location.href='cart.html'" style="cursor:pointer">
+                <div class="cart-icon-wrap"><i class="fas fa-shopping-cart action-icon"></i><span class="cart-badge">0</span></div>
+                <div><div class="action-label">Giỏ hàng</div><div class="action-value" id="cartTotal">0 ₫</div></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== NAV BAR (Từ Index) ===== -->
+<nav class="main-nav">
+    <div class="container d-flex align-items-stretch p-0">
+        <div class="cat-toggle-btn"><i class="fas fa-th-large me-2"></i> DANH MỤC</div>
+        <div class="nav-links d-flex align-items-center flex-grow-1 ps-4 gap-4">
+            <a href="#" class="nav-link-item">Khuyến Mãi</a>
+            <a href="#" class="nav-link-item">Sách Mới</a>
+            <a href="#" class="nav-link-item">Tác giả nổi bật</a>
+            <a href="#" class="nav-link-item">Tin Sách</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== NỘI DUNG CHI TIẾT ===== -->
+<div class="container py-4">
+    <div class="white-card">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-4" style="font-size: 12px;">
+                <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+                <li class="breadcrumb-item active" id="breadTitle">Tên sách</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <div class="col-md-4 text-center">
+                <img id="mainImg" src="/src/img/default-book.png" class="img-fluid border rounded p-2 shadow-sm" style="max-height: 450px;">
+            </div>
+            <div class="col-md-5">
+                <h1 class="product-title" id="bookTitle">Đang tải...</h1>
+                <div class="price-box-red">
+                    <div>Giá bán: <span class="neta-price" id="bookPrice">0đ</span></div>
+                    <div class="mt-1">Giá thị trường: <span class="market-price" id="bookOldPrice">0đ</span></div>
+                    <div class="small mt-2">Tiết kiệm: <span id="saveAmount" class="fw-bold text-success">0đ</span> <span class="text-danger fw-bold" id="savePercent">(-0%)</span></div>
+                </div>
+                <div class="promo-neta">
+                    <div class="fw-bold mb-3">ƯU ĐÃI TẶNG KÈM:</div>
+                    <div class="d-flex gap-2 mb-2"><div class="promo-circle">1</div><div><b>MIỄN PHÍ GIAO HÀNG</b> đơn từ 199k toàn quốc</div></div>
+                    <div class="d-flex gap-2"><div class="promo-circle">2</div><div><b>Bao sách miễn phí</b> (theo yêu cầu)</div></div>
+                </div>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="qty-input">
+                        <button onclick="changeQty(-1)">-</button><input type="text" id="buyQty" value="1" readonly><button onclick="changeQty(1)">+</button>
+                    </div>
+                    <div class="small text-muted">Trạng thái: <b>Còn hàng</b></div>
+                </div>
+                <button class="btn-buy-now" onclick="addToCart()">THÊM VÀO GIỎ HÀNG</button>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 border rounded shadow-sm">
+                    <div class="fw-bold mb-3 border-bottom pb-2">THÔNG SỐ CHI TIẾT</div>
+                    <table class="specs-table">
+                        <tr><td class="specs-lbl">Tác giả:</td><td class="specs-val" id="bookAuthor">...</td></tr>
+                        <tr><td class="specs-lbl">Dịch giả:</td><td class="specs-val" id="bookTranslator">...</td></tr>
+                        <tr><td class="specs-lbl">Năm XB:</td><td class="specs-val" id="bookYear">2024</td></tr>
+                        <tr><td class="specs-lbl">Bìa:</td><td class="specs-val" id="bookFormat">Bìa mềm</td></tr>
+                        <tr><td class="specs-lbl">Trang:</td><td class="specs-val" id="bookPages">0</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Giới thiệu -->
+        <div class="mt-5 border-top pt-4">
+            <h5 class="fw-bold mb-3">GIỚI THIỆU SÁCH</h5>
+            <div class="desc-fade" id="descWrap">
+                <div id="bookDesc">Mô tả sách đang tải...</div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="text-center"><button class="btn-expand" onclick="toggleDesc()">XEM THÊM</button></div>
+        </div>
+
+        <!-- Đánh giá -->
+        <div class="mt-5 border-top pt-5">
+            <h5 class="fw-bold mb-4">ĐÁNH GIÁ CỦA ĐỘC GIẢ</h5>
+            <div class="row g-4 align-items-center mb-4">
+                <div class="col-md-3 text-center border-end">
+                    <div class="display-4 fw-bold text-danger" id="avgRating">0.0</div>
+                    <div class="text-warning fs-4" id="avgStars">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="col-md-9 bg-light p-4 rounded">
+                    <h6 class="fw-bold mb-3">GỬI ĐÁNH GIÁ CỦA BẠN</h6>
+                    <textarea id="revContent" class="form-control mb-2" rows="2" placeholder="Cảm nghĩ của ông về sách..."></textarea>
+                    <div class="d-flex gap-2">
+                        <input id="revName" type="text" class="form-control form-control-sm" style="width: 200px;" placeholder="Họ tên">
+                        <select id="revStars" class="form-select form-select-sm" style="width: 100px;">
+                            <option value="5">5 ⭐</option><option value="4">4 ⭐</option><option value="3">3 ⭐</option><option value="2">2 ⭐</option><option value="1">1 ⭐</option>
+                        </select>
+                        <button class="btn btn-sm btn-warning fw-bold text-white px-4" onclick="submitReview()">GỬI</button>
+                    </div>
+                </div>
+            </div>
+            <div id="reviewList"></div>
+        </div>
+
+        <!-- Liên quan -->
+        <div class="mt-5 border-top pt-5">
+            <h5 class="fw-bold mb-4">CÓ THỂ BẠN QUAN TÂM</h5>
+            <div class="row row-cols-2 row-cols-md-5 g-4" id="relatedList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FOOTER (Từ Index) ===== -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="footer-logo mb-3"><div class="logo-box sm">H</div><span class="logo-text sm">HuyStore<span class="logo-vn">.vn</span></span></div>
+                <p class="small text-muted">Nhà sách online hàng đầu Việt Nam. Chất lượng và uy tín là ưu tiên số 1.</p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Hỗ trợ khách hàng</h6>
+                <ul class="footer-links"><li><a href="#">Hướng dẫn mua hàng</a></li><li><a href="#">Chính sách đổi trả</a></li></ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Gian hàng</h6>
+                <div class="d-flex gap-2"><span class="badge bg-primary">Tiki</span><span class="badge bg-danger">Shopee</span></div>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Kết nối</h6>
+                <div class="fs-3 d-flex gap-3 text-secondary"><i class="fab fa-facebook"></i><i class="fab fa-tiktok"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom mt-4 py-3 border-top text-center text-muted small">
+        © 2026 – Công ty TNHH HuyStore Việt Nam – www.huystore.vn
+    </div>
+</footer>
+
+<script src="src/js/product-detail.js?v=123"></script>
+<script>
+    function toggleDesc() {
+        const wrap = document.getElementById('descWrap');
+        const overlay = wrap.querySelector('.fade-overlay');
+        const btn = event.target;
+        if (wrap.style.maxHeight === 'none') {
+            wrap.style.maxHeight = '400px'; overlay.style.display = 'block'; btn.innerText = 'XEM THÊM';
+        } else {
+            wrap.style.maxHeight = 'none'; overlay.style.display = 'none'; btn.innerText = 'THU GỌN';
+        }
+    }
+</script>
+</body>
+</html>

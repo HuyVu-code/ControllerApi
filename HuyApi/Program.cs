@@ -1,4 +1,4 @@
-﻿using LibraryManagementAPI.Data;
+using LibraryManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,5 +37,5 @@ if (app.Environment.IsDevelopment() || true)
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapFallbackToFile("/admin/{*path}", "admin.html");
 app.Run();

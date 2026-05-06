@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng thành công | HuyStore.vn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root { --p-red: #ee4d2d; --p-green: #2ecc71; --p-blue: #008afe; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 30px 0; }
+        .success-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 40px; max-width: 600px; margin: auto; text-align: center; }
+        .check-icon { width: 70px; height: 70px; background: var(--p-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin: 0 auto 20px; }
+        
+        .order-id-badge { background: #fff5f2; color: var(--p-red); padding: 8px 20px; border-radius: 50px; font-weight: 800; font-size: 18px; margin: 15px 0; display: inline-block; border: 1px dashed var(--p-red); }
+        
+        .btn-main { background: var(--p-red); color: white; border: none; padding: 12px 30px; border-radius: 4px; font-weight: 600; transition: 0.3s; width: 100%; margin-top: 20px; }
+        .btn-detail { background: #fff; color: #555; border: 1px solid #ddd; padding: 12px 30px; border-radius: 4px; font-weight: 600; width: 100%; margin-top: 10px; }
+        
+        .detail-box { display: none; text-align: left; margin-top: 30px; border-top: 1px solid #eee; padding-top: 25px; animation: slideDown 0.4s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+        .info-label { color: #888; }
+        .info-value { font-weight: 600; color: #333; text-align: right; }
+        
+        .status-paid { background: #e8f5e9; color: #2e7d32; padding: 3px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+        .status-shipping { background: #e3f2fd; color: #1565c0; padding: 3px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+        
+        .item-list { background: #fbfbfb; border-radius: 8px; padding: 15px; margin-top: 15px; }
+        .item-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .item-row img { width: 40px; height: 55px; object-fit: contain; background: white; border: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="success-card">
+        <div class="check-icon"><i class="fas fa-check"></i></div>
+        <h3 class="fw-bold text-dark">Đặt hàng thành công!</h3>
+        <p class="text-muted small">Cảm ơn ông đã mua hàng tại HuyStore.vn.<br>Chúng tôi sẽ sớm liên hệ để giao sách đến ông.</p>
+        
+        <div class="order-id-badge" id="orderId">Mã đơn: #HS123456</div>
+        
+        <div class="mt-4">
+            <button class="btn-main" onclick="location.href='index.html'">Tiếp tục mua sắm</button>
+            <button class="btn-detail" onclick="toggleDetails()" id="btnToggle">Xem chi tiết đơn hàng <i class="fas fa-chevron-down ms-1"></i></button>
+        </div>
+
+        <!-- Chi tiết đơn hàng ẩn -->
+        <div id="detailsBox" class="detail-box">
+            <h6 class="fw-bold mb-3">CHI TIẾT ĐƠN HÀNG</h6>
+            
+            <div class="info-row">
+                <span class="info-label">Trạng thái:</span>
+                <span id="detStatus">...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Thời gian đặt:</span>
+                <span class="info-value" id="detDate">...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phương thức:</span>
+                <span class="info-value" id="detMethod">...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Người nhận:</span>
+                <span class="info-value" id="detName">...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Địa chỉ:</span>
+                <span class="info-value" id="detAddr">...</span>
+            </div>
+
+            <div class="item-list" id="detItems">
+                <!-- Items list -->
+            </div>
+
+            <div class="info-row mt-3 pt-3 border-top">
+                <span class="fw-bold">Tổng thanh toán:</span>
+                <span class="h5 fw-bold text-danger mb-0" id="detTotal">0₫</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const order = JSON.parse(localStorage.getItem('latestOrder'));
+        if (!order) { location.href = 'index.html'; return; }
+
+        document.getElementById('orderId').innerText = `Mã đơn: #${order.id}`;
+        document.getElementById('detDate').innerText = order.date;
+        document.getElementById('detMethod').innerText = order.method;
+        document.getElementById('detName').innerText = order.customer.name;
+        document.getElementById('detAddr').innerText = order.customer.addr;
+        document.getElementById('detTotal').innerText = order.total;
+
+        // Xử lý Badge trạng thái
+        const statusEl = document.getElementById('detStatus');
+        statusEl.innerText = order.status;
+        if (order.status === 'Đã thanh toán') {
+            statusEl.className = 'status-paid';
+        } else {
+            statusEl.className = 'status-shipping';
+        }
+
+        const itemsHtml = order.items.map(item => `
+            <div class="item-row">
+                <img src="${item.img || 'src/img/default-book.png'}">
+                <div class="flex-grow-1 text-start">
+                    <div class="small fw-bold text-dark">${item.title}</div>
+                    <div class="text-muted small">Số lượng: ${item.qty}</div>
+                </div>
+                <div class="text-danger small fw-bold">${(item.price * item.qty).toLocaleString('vi-VN')}₫</div>
+            </div>
+        `).join('');
+        document.getElementById('detItems').innerHTML = itemsHtml;
+    });
+
+    function toggleDetails() {
+        const box = document.getElementById('detailsBox');
+        const btn = document.getElementById('btnToggle');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.innerHTML = 'Xem chi tiết đơn hàng <i class="fas fa-chevron-down ms-1"></i>';
+        } else {
+            box.style.display = 'block';
+            btn.innerHTML = 'Đóng chi tiết <i class="fas fa-chevron-up ms-1"></i>';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán | HuyStore.vn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/css/style.css">
+    <style>
+        :root {
+            --p-red: #ee4d2d;
+            --p-blue: #008afe;
+            --p-momo: #ae2070;
+            --p-text: #222;
+        }
+
+        body {
+            background: #f6f6f6;
+            font-family: 'Inter', sans-serif;
+            color: var(--p-text);
+        }
+
+        .checkout-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+
+        .block-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .block-title i {
+            color: var(--red);
+            font-size: 16px;
+        }
+
+        .checkout-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        /* Address Section */
+        .input-group-custom {
+            margin-bottom: 20px;
+        }
+
+        .input-group-custom label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #777;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .input-custom {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 14px;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-custom:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.05);
+        }
+
+        /* Payment Methods list */
+        .method-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .method-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .method-btn:hover {
+            border-color: var(--red);
+            background: #fffaf9;
+        }
+
+        .method-btn.active {
+            border-color: var(--red);
+            background: #fffaf9;
+            box-shadow: 0 4px 12px rgba(238, 77, 45, 0.08);
+        }
+
+        .method-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .method-logo {
+            width: 40px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .method-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* Selection Dot */
+        .method-dot {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .method-btn.active .method-dot {
+            border-color: var(--red);
+        }
+
+        .method-btn.active .method-dot::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--red);
+            border-radius: 50%;
+        }
+
+        /* Hidden Content Areas */
+        .method-detail {
+            display: none;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            background: #fafafa;
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
+        .method-detail.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bank Info Design */
+        .bank-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #eee;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #ddd;
+        }
+
+        /* Right Sidebar */
+        .summary-box {
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .summary-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--red);
+        }
+
+        .btn-order {
+            width: 100%;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 16px;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(238, 77, 45, 0.2);
+            transition: all 0.3s;
+        }
+
+        .btn-order:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(238, 77, 45, 0.3);
+        }
+
+        .item-preview {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .item-preview img {
+            width: 45px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .item-preview-info {
+            flex: 1;
+        }
+
+        .item-preview-name {
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="bg-white py-3 border-bottom sticky-top">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="index.html" class="text-decoration-none d-flex align-items-center gap-2">
+                <div class="bg-danger text-white rounded px-2 py-1 fw-bold">H</div>
+                <span class="fs-4 fw-bold text-dark">HuyStore<span class="text-danger">.vn</span></span>
+            </a>
+            <div class="text-muted small fw-bold"><i class="fas fa-shield-alt text-success me-1"></i> THANH TOÁN AN TOÀN
+            </div>
+        </div>
+    </header>
+
+    <div class="checkout-container">
+        <div class="row">
+            <!-- Main Info -->
+            <div class="col-lg-7">
+                <!-- Section 1: Address -->
+                <div class="checkout-card">
+                    <h5 class="block-title"><i class="fas fa-map-marker-alt"></i> 1. Thông tin giao hàng</h5>
+                    <div class="row">
+                        <div class="col-md-6 input-group-custom">
+                            <label>Họ và tên</label>
+                            <input type="text" id="custName" class="input-custom" placeholder="Nhập tên người nhận">
+                        </div>
+                        <div class="col-md-6 input-group-custom">
+                            <label>Số điện thoại</label>
+                            <input type="text" id="custPhone" class="input-custom" placeholder="Nhập SĐT liên hệ">
+                        </div>
+                        <div class="col-12 input-group-custom">
+                            <label>Địa chỉ nhận hàng</label>
+                            <input type="text" id="custAddr" class="input-custom"
+                                placeholder="Số nhà, đường, phường/xã, quận/huyện...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Payment -->
+                <div class="checkout-card">
+                    <h5 class="block-title"><i class="fas fa-credit-card"></i> 2. Phương thức thanh toán</h5>
+
+                    <div class="method-list">
+                        <!-- Visa/Mastercard -->
+                        <div class="method-btn active" onclick="selectPay('card', this)">
+                            <div class="method-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                                    class="method-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                                    class="method-logo">
+                                <span class="method-name">Thẻ Quốc tế (Visa, Mastercard)</span>
+                            </div>
+                            <div class="method-dot"></div>
+                        </div>
+                        <div id="detail-card" class="method-detail active">
+                            <div class="mb-3">
+                                <input type="text" class="input-custom" placeholder="Số thẻ (xxxx xxxx xxxx xxxx)">
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6"><input type="text" class="input-custom" placeholder="MM / YY"></div>
+                                <div class="col-6"><input type="text" class="input-custom" placeholder="CVV"></div>
+                            </div>
+                        </div>
+
+                        <!-- MoMo -->
+                        <div class="method-btn" onclick="selectPay('momo', this)">
+                            <div class="method-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
+                                    class="method-logo">
+                                <span class="method-name">Ví điện tử MoMo</span>
+                            </div>
+                            <div class="method-dot"></div>
+                        </div>
+                        <div id="detail-momo" class="method-detail text-center">
+                            <p class="small fw-bold mb-3">Quét mã MoMo để hoàn tất thanh toán</p>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=MOMO_HUYSTORE"
+                                style="border: 4px solid #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                        </div>
+
+                        <!-- Bank Transfer -->
+                        <div class="method-btn" onclick="selectPay('bank', this)">
+                            <div class="method-info">
+                                <i class="fas fa-university fs-4 text-dark" style="width:40px; text-align:center"></i>
+                                <span class="method-name">Chuyển khoản Ngân hàng</span>
+                            </div>
+                            <div class="method-dot"></div>
+                        </div>
+                        <div id="detail-bank" class="method-detail">
+                            <div class="bank-card mb-2">
+                                <div><span class="text-muted small">STK:</span> <b id="bankAcc">0973457533</b></div>
+                                <button class="copy-btn" onclick="copyText('bankAcc')">SAO CHÉP</button>
+                            </div>
+                            <div class="bank-card mb-2">
+                                <div><span class="text-muted small">Ngân hàng:</span> <b>MB BANK</b></div>
+                            </div>
+                            <div class="bank-card">
+                                <div><span class="text-muted small">Chủ TK:</span> <b>VU HOANG HUY</b></div>
+                            </div>
+                        </div>
+
+                        <!-- COD -->
+                        <div class="method-btn" onclick="selectPay('cod', this)">
+                            <div class="method-info">
+                                <i class="fas fa-truck fs-4 text-dark" style="width:40px; text-align:center"></i>
+                                <span class="method-name">Thanh toán khi nhận hàng (COD)</span>
+                            </div>
+                            <div class="method-dot"></div>
+                        </div>
+                        <div id="detail-cod" class="method-detail">
+                            <p class="small text-muted mb-0">Ông sẽ thanh toán tiền mặt cho nhân viên giao hàng khi nhận
+                                được sách.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Summary -->
+            <div class="col-lg-5">
+                <div class="checkout-card summary-box">
+                    <h5 class="block-title">Tóm tắt đơn hàng</h5>
+                    <div id="orderItems">
+                        <!-- Render by JS -->
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="summary-item">
+                            <span>Tạm tính</span>
+                            <span id="subtotal">0đ</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Phí vận chuyển</span>
+                            <span class="text-success fw-bold">Miễn phí</span>
+                        </div>
+                        <div class="summary-total d-flex justify-content-between">
+                            <span>Tổng cộng</span>
+                            <span id="grandTotal">0đ</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-order" onclick="placeOrder()">ĐẶT HÀNG NGAY</button>
+                    <div class="text-center mt-3 small text-muted">
+                        <i class="fas fa-check-circle text-success me-1"></i> HuyStore cam kết sách chính hãng 100%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('HuyStore_Cart') || '[]');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Checkout Page Loaded. Cart items:", cart.length);
+            if (cart.length === 0) {
+                console.warn("Giỏ hàng trống hoặc chưa tải được dữ liệu!");
+                // Không redirect nữa để ông còn đứng lại xem được trang
+            }
+            renderOrder();
+        });
+
+        function renderOrder() {
+            const container = document.getElementById('orderItems');
+            let total = 0;
+            let html = '';
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                html += `
+                <div class="item-preview">
+                    <img src="${item.img || 'src/img/default-book.png'}">
+                    <div class="item-preview-info">
+                        <div class="item-preview-name">${item.title}</div>
+                        <div class="text-muted small">Số lượng: ${item.qty}</div>
+                        <div class="text-danger fw-bold small">${(item.price * item.qty).toLocaleString('vi-VN')}đ</div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+            document.getElementById('subtotal').textContent = total.toLocaleString('vi-VN') + 'đ';
+            document.getElementById('grandTotal').textContent = total.toLocaleString('vi-VN') + 'đ';
+        }
+
+        function selectPay(id, el) {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.method-detail').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('detail-' + id).classList.add('active');
+        }
+
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert('Đã sao chép: ' + text);
+        }
+
+        function placeOrder() {
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const addr = document.getElementById('custAddr').value;
+            const method = document.querySelector('.method-btn.active .method-name').textContent;
+            const total = document.getElementById('grandTotal').textContent;
+
+            if (!name || !phone || !addr) return alert('⚠️ Vui lòng nhập đầy đủ thông tin giao hàng!');
+
+            // Lưu thông tin đơn hàng để trang Success hiển thị
+            const orderData = {
+                id: '#HS' + Math.floor(Math.random() * 900000 + 100000),
+                name: name,
+                phone: phone,
+                address: addr,
+                payment: method,
+                total: total,
+                items: cart
+            };
+            sessionStorage.setItem('latestOrder', JSON.stringify(orderData));
+
+            // Xóa giỏ hàng và chuyển trang
+            localStorage.removeItem('HuyStore_Cart');
+            window.location.href = 'order-success.html';
+        }
+    </script>
+</body>
+
+</html>
