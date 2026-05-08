@@ -36,12 +36,14 @@
         </a>
 
         <!-- Search -->
-        <div class="search-wrapper flex-grow-1">
+        <div class="search-wrapper flex-grow-1" style="position: relative;">
             <form id="searchForm" class="search-box" onsubmit="handleSearch(event)">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm sách, tác giả, thể loại...">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm sách, tác giả, thể loại..." autocomplete="off">
                 <button type="submit" class="btn-search">Tìm Kiếm</button>
             </form>
+            <!-- Dropdown gợi ý tìm kiếm -->
+            <div id="searchSuggest" class="search-suggest"></div>
         </div>
 
         <!-- Actions -->
@@ -365,6 +367,35 @@
         <div class="d-flex">
             <div class="toast-body"><i class="fas fa-check-circle me-2"></i><span id="toastMsg">Đã thêm vào giỏ!</span></div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chatbox Widget -->
+<div class="ai-chat-widget">
+    <button id="aiChatToggle" class="ai-chat-btn" onclick="toggleAIChat()">
+        <i class="fas fa-robot"></i>
+        <span class="ai-chat-badge">1</span>
+    </button>
+    <div id="aiChatBox" class="ai-chat-box d-none">
+        <div class="ai-chat-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+                <div>
+                    <h6 class="mb-0 fw-bold" style="font-size: 15px;">HuyStore AI</h6>
+                    <small style="font-size:11px; opacity: 0.8;">Luôn sẵn sàng hỗ trợ bạn</small>
+                </div>
+            </div>
+            <button class="btn-close btn-close-white" style="font-size: 10px;" onclick="toggleAIChat()"></button>
+        </div>
+        <div id="aiChatBody" class="ai-chat-body">
+            <div class="ai-message bot-msg">
+                <div class="msg-bubble">Chào bạn! Mình là Trợ lý AI của HuyStore. Mình có thể giúp gì cho bạn hôm nay?</div>
+            </div>
+        </div>
+        <div class="ai-chat-footer">
+            <input type="text" id="aiChatInput" placeholder="Nhập tin nhắn..." onkeypress="handleAIChatKey(event)">
+            <button onclick="sendAIMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>

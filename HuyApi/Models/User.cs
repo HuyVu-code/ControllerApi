@@ -1,4 +1,4 @@
-﻿namespace LibraryManagementAPI.Models
+namespace LibraryManagementAPI.Models
 {
     public class User
     {
@@ -8,6 +8,9 @@
 
         // Chứa giá trị: "Admin", "Librarian", hoặc "Member"
         public string Role { get; set; } = "Member";
+
+        // Thêm cột Email để khôi phục mật khẩu
+        public string? Email { get; set; }
 
         // Dùng để khóa thẻ nếu độc giả nợ sách quá hạn
         public bool IsLocked { get; set; } = false;

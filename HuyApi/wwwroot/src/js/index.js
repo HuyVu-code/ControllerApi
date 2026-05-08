@@ -187,21 +187,98 @@ function filterByCategory(cat, el) {
 
 // ─── Search ───────────────────────────────────────────────────
 function handleSearch(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    if (!q) { filteredBooks = [...allProducts]; }
-    else {
+    
+    if (!q) { 
+        filteredBooks = [...allProducts]; 
+    } else {
         filteredBooks = allProducts.filter(p =>
-            p.title.toLowerCase().includes(q) ||
-            p.author.toLowerCase().includes(q) ||
-            p.category.toLowerCase().includes(q)
+            (p.title && p.title.toLowerCase().includes(q)) ||
+            (p.author && p.author.toLowerCase().includes(q)) ||
+            (p.category && p.category.toLowerCase().includes(q))
         );
     }
+    
     currentPage = 1;
     const title = document.getElementById('sectionTitle');
-    if (title) title.textContent = q ? `Kết quả: "${q}"` : 'Gợi Ý Hôm Nay';
+    if (title) title.textContent = q ? `Kết quả tìm kiếm: "${q}"` : 'Gợi Ý Hôm Nay';
+    
     renderProducts();
+    
+    // Tự động cuộn xuống phần sản phẩm nếu người dùng bấm nút Tìm kiếm
+    if (e && e.type === 'submit') {
+        const productSection = document.getElementById('productSection');
+        if (productSection) {
+            productSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 }
+
+// Lắng nghe sự kiện gõ phím để hiển thị hộp thoại gợi ý (Autocomplete)
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggest = document.getElementById('searchSuggest');
+
+    if (searchInput && searchSuggest) {
+        searchInput.addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            
+            if (!q) {
+                searchSuggest.classList.remove('active');
+                return;
+            }
+
+            // Lọc nhanh 5 sản phẩm khớp nhất
+            const suggestBooks = allProducts.filter(p =>
+                (p.title && p.title.toLowerCase().includes(q)) ||
+                (p.author && p.author.toLowerCase().includes(q)) ||
+                (p.category && p.category.toLowerCase().includes(q))
+            ).slice(0, 5); // Chỉ lấy 5 kết quả đầu tiên
+
+            if (suggestBooks.length === 0) {
+                searchSuggest.innerHTML = '<div class="p-3 text-center text-muted small">Không tìm thấy sách phù hợp</div>';
+            } else {
+                searchSuggest.innerHTML = suggestBooks.map(p => `
+                    <div class="suggest-item" onclick="openBook(${p.id})">
+                        <img class="suggest-img" src="${p.image}" alt="${p.title}">
+                        <div class="suggest-info">
+                            <div class="suggest-title">${p.title}</div>
+                            <div class="suggest-author">${p.author}</div>
+                            <div class="suggest-price">${p.price.toLocaleString('vi-VN')}đ</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Thêm mục xem tất cả kết quả
+                searchSuggest.innerHTML += `
+                    <div class="text-center p-2" style="background: #f9f9f9; border-top: 1px solid #eee; cursor: pointer; color: var(--red); font-weight: 600; font-size: 13px;" onclick="document.getElementById('searchForm').dispatchEvent(new Event('submit'))">
+                        Xem tất cả kết quả cho "${e.target.value}" <i class="fas fa-angle-right ms-1"></i>
+                    </div>
+                `;
+            }
+            
+            searchSuggest.classList.add('active');
+            
+            // Cập nhật ngầm lưới sản phẩm bên dưới để đồng bộ
+            handleSearch();
+        });
+
+        // Ẩn hộp thoại khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                searchSuggest.classList.remove('active');
+            }
+        });
+        
+        // Hiện lại hộp thoại khi click vào ô tìm kiếm (nếu đã có nội dung)
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim() !== '') {
+                searchSuggest.classList.add('active');
+            }
+        });
+    }
+});
 
 // ─── Render Products ──────────────────────────────────────────
 function renderProducts() {
@@ -502,3 +579,240 @@ function addToCart(id, title, price, imgSource) {
 }
 
 document.addEventListener('DOMContentLoaded', updateCartHeader);
+
+// ==========================================
+// AI CHATBOT LOGIC
+// ==========================================
+function toggleAIChat() {
+    const box = document.getElementById('aiChatBox');
+    const badge = document.querySelector('.ai-chat-badge');
+    if (box.classList.contains('d-none')) {
+        box.classList.remove('d-none');
+        if (badge) badge.style.display = 'none';
+        document.getElementById('aiChatInput').focus();
+    } else {
+        box.classList.add('d-none');
+    }
+}
+
+function handleAIChatKey(e) {
+    if (e.key === 'Enter') {
+        sendAIMessage();
+    }
+}
+
+const GEMINI_API_KEY = 'AIzaSyDvejtPghUoqWfvwZLxbsiFMWPTkVvsNmw';
+
+let aiChatHistory = [];
+
+async function sendAIMessage() {
+    const input = document.getElementById('aiChatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    // Hiện tin nhắn user
+    appendMessage(msg, 'user');
+    input.value = '';
+
+    // Hiện Typing
+    const typingId = showTyping();
+
+    try {
+        const response = await getGeminiResponse(msg);
+        const tEl = document.getElementById(typingId);
+        if (tEl) tEl.remove();
+        appendMessage(response, 'bot');
+    } catch (e) {
+        console.error("Lỗi gọi Gemini:", e);
+        const tEl = document.getElementById(typingId);
+        if (tEl) tEl.remove();
+        appendMessage("Lỗi kết nối Gemini API. Bạn hãy nhấn F12 -> Console để xem chi tiết lỗi nhé!", 'bot');
+    }
+}
+
+async function getGeminiResponse(userText) {
+    if (aiChatHistory.length === 0) {
+        // Lấy danh sách tối đa 40 sách hiện có để nạp vào não AI
+        const bookTitles = allProducts.map(p => p.title || p.Title).slice(0, 40).join(', ');
+        
+        aiChatHistory.push({
+            "role": "user",
+            "parts": [{ "text": `SYSTEM INSTRUCTION: Bạn là HuyStore AI. Tên chủ: Vũ Hoàng Huy. Khi khách nhờ tư vấn sách, HÃY CHỌN sách trong danh sách này: [${bookTitles}]. QUAN TRỌNG NHẤT: Khi bạn nhắc đến một cuốn sách, BẮT BUỘC bạn phải bọc tên sách đó trong cú pháp [PRODUCT: Tên sách] để hệ thống hiển thị hình ảnh. Ví dụ: Dạ bạn có thể mua cuốn [PRODUCT: Đắc Nhân Tâm] hoặc [PRODUCT: Nhà Giả Kim] nhé. Trả lời thật ngắn gọn, thân thiện, không dài dòng.` }]
+        });
+        aiChatHistory.push({
+            "role": "model",
+            "parts": [{ "text": "Dạ vâng, mình đã ghi nhớ. Mình sẽ tư vấn và luôn bọc tên sách bằng [PRODUCT: Tên sách] ạ! 😊" }]
+        });
+    }
+
+    // Thêm câu hỏi vào lịch sử
+    aiChatHistory.push({ "role": "user", "parts": [{ "text": userText }] });
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    const payload = {
+        contents: aiChatHistory
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        console.log("Gemini API Response:", data); // Log để kiểm tra lỗi
+        
+        if (data.candidates && data.candidates.length > 0) {
+            const botText = data.candidates[0].content.parts[0].text;
+            // Lưu câu trả lời vào lịch sử để duy trì ngữ cảnh
+            aiChatHistory.push({ "role": "model", "parts": [{ "text": botText }] });
+            
+            // Chuyển dấu xuống dòng thành thẻ <br>
+            return botText.replace(/\n/g, '<br>');
+        }
+        
+        // Lỗi xảy ra từ API
+        aiChatHistory.pop();
+        throw new Error(data.error ? data.error.message : 'Unknown Error');
+    } catch (apiError) {
+        console.error("Gemini API Error, falling back to Local AI:", apiError);
+        aiChatHistory.pop(); // Xóa lịch sử user vừa rồi để tránh lệch
+        return getFallbackAIResponse(userText);
+    }
+}
+
+function getFallbackAIResponse(text) {
+    const lowerText = text.toLowerCase();
+    
+    if (lowerText.includes('chào') || lowerText.includes('hi ') || lowerText.includes('hello') || lowerText.includes('xin chào') || lowerText.includes('alo')) {
+        return 'Chào bạn! Mình là AI của HuyStore. Mình có thể tư vấn sách gì cho bạn hôm nay?';
+    }
+    if (lowerText.includes('sách') || lowerText.includes('mua gì') || lowerText.includes('sản phẩm') || lowerText.includes('tư vấn') || lowerText.includes('mua hàng') || lowerText.includes('rẻ') || lowerText.includes('lịch sử') || lowerText.includes('tâm lý')) {
+        let recs = '';
+        let intro = 'Dạ đây là một số cuốn sách hot nhất của HuyStore hiện tại ạ:';
+        
+        if (typeof allProducts !== 'undefined' && allProducts.length > 0) {
+            let filtered = [...allProducts];
+
+            // Phân tích thể loại
+            if (lowerText.includes('lịch sử')) {
+                filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('lịch sử'));
+                intro = 'Dạ đây là những cuốn sách về đề tài Lịch Sử rất hay ạ:';
+            } else if (lowerText.includes('tâm lý')) {
+                filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('tâm lý'));
+                intro = 'Dạ đây là những cuốn sách Tâm Lý Học nổi bật nhất ạ:';
+            } else if (lowerText.includes('văn học') || lowerText.includes('tiểu thuyết')) {
+                filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('văn học'));
+                intro = 'Dạ đây là những tiểu thuyết, văn học đang bán chạy ạ:';
+            }
+
+            // Phân tích giá cả
+            if (lowerText.includes('rẻ')) {
+                filtered = filtered.sort((a, b) => a.price - b.price);
+                intro = 'Dạ đây là những cuốn sách có giá "hạt dẻ" nhất bên mình ạ:';
+            } else if (lowerText.includes('đắt') || lowerText.includes('cao cấp')) {
+                filtered = filtered.sort((a, b) => b.price - a.price);
+                intro = 'Dạ đây là những cuốn sách cao cấp nhất bên mình ạ:';
+            } else {
+                filtered = filtered.sort(() => 0.5 - Math.random()); // Random nếu không hỏi giá
+            }
+
+            if (filtered.length === 0) {
+                return 'Dạ hiện tại bên mình tạm hết sách thuộc thể loại này rồi ạ! Bạn thử xem thể loại khác nhé 😭';
+            }
+
+            const selected = filtered.slice(0, 3);
+            recs = selected.map(p => `[PRODUCT: ${p.title}]`).join('<br>');
+        } else {
+            recs = '[PRODUCT: Đắc Nhân Tâm]<br>[PRODUCT: Nhà Giả Kim]<br>[PRODUCT: Tuổi Trẻ Đáng Giá Bao Nhiêu]';
+        }
+        return `${intro}<br>${recs}<br>Bạn ưng cuốn nào thì bấm nút Giỏ Hàng nhé!`;
+    }
+    if (lowerText.includes('giá') || lowerText.includes('tiền') || lowerText.includes('bao nhiêu')) {
+        return 'Giá của mỗi cuốn sách đều được ghi rõ ràng bên dưới sản phẩm. Đặc biệt mua trên web sẽ rẻ hơn mua ở nhà sách đó nha!';
+    }
+    if (lowerText.includes('thanh toán') || lowerText.includes('ngân hàng') || lowerText.includes('momo') || lowerText.includes('ck') || lowerText.includes('chuyển khoản')) {
+        return 'Bên mình hỗ trợ thanh toán khi nhận hàng (COD), hoặc chuyển khoản 24/7 tự động qua TPBank và MoMo rất tiện lợi ạ!';
+    }
+    if (lowerText.includes('ở đâu') || lowerText.includes('địa chỉ') || lowerText.includes('cửa hàng') || lowerText.includes('đến mua')) {
+        return 'HuyStore hiện tại là nhà sách Online nha bạn. Bạn cứ đặt hàng trên web là shipper giao tới tận giường luôn ạ!';
+    }
+    if (lowerText.includes('tác giả') || lowerText.includes('huy') || lowerText.includes('admin') || lowerText.includes('chủ')) {
+        return 'Ông chủ của mình là anh Vũ Hoàng Huy. Anh ấy vừa đẹp trai lại vừa code hệ thống này đó! 😆';
+    }
+    if (lowerText.includes('thời tiết') || lowerText.includes('trời') || lowerText.includes('mưa') || lowerText.includes('nắng')) {
+        return 'Trời có thế nào thì pha một ly cafe nóng và nhâm nhi một cuốn sách hay vẫn là tuyệt vời nhất! Bạn muốn mình gợi ý vài cuốn sách không? ☕📖';
+    }
+    if (lowerText.includes('ăn cơm') || lowerText.includes('đói') || lowerText.includes('ăn gì')) {
+        return 'Mình là AI nên không cần ăn cơm, nhưng mình rất "thèm" được đọc sách cùng bạn đó! Mua sách ủng hộ ông chủ Vũ Hoàng Huy của mình nha! 😋📚';
+    }
+    if (lowerText.includes('yêu') || lowerText.includes('người yêu') || lowerText.includes('bạn gái') || lowerText.includes('thất tình') || lowerText.includes('buồn')) {
+        return 'Đừng buồn nhé! Người yêu có thể không có nhưng sách thì nhất định phải có một cuốn! Đọc sách Tâm Lý sẽ giúp bạn chữa lành và vui vẻ hơn đó. 🥰';
+    }
+    if (lowerText.includes('cảm ơn') || lowerText.includes('thanks') || lowerText.includes('thank you') || lowerText.includes('ok')) {
+        return 'Dạ không có chi! Chúc bạn một ngày tràn đầy năng lượng và mua được sách ưng ý nhé! ❤️';
+    }
+    if (lowerText.includes('ngu') || lowerText.includes('dở') || lowerText.includes('ngốc')) {
+        return 'Huhu, mình vẫn đang học hỏi mỗi ngày nên trả lời có phần hơi ngốc nghếch. Bạn thông cảm dùng các từ khóa liên quan đến Sách giúp mình nha! 😭';
+    }
+    
+    return 'Chà, câu hỏi này thú vị đó! Nhưng hiện tại mình đang tập trung làm trợ lý bán sách cho HuyStore. Thay vì suy nghĩ nhiều, tụi mình rước ngay 1 cuốn sách về đọc giải trí đi bạn! Mình tư vấn cho bạn nhé? 🚀';
+}
+
+function appendMessage(text, sender) {
+    const body = document.getElementById('aiChatBody');
+    const div = document.createElement('div');
+    div.className = `ai-message ${sender}-msg`;
+    
+    // Xử lý render HTML Sản phẩm nếu có cú pháp [PRODUCT: ...]
+    let processedText = text;
+    if (sender === 'bot') {
+        const productRegex = /\[PRODUCT:\s*(.+?)\]/g;
+        processedText = text.replace(productRegex, (match, p1) => {
+            const searchTitle = p1.trim().toLowerCase();
+            const product = allProducts.find(p => p.title.toLowerCase().includes(searchTitle));
+            
+            if (product) {
+                const pTitle = product.title;
+                const pPrice = product.price.toLocaleString('vi-VN') + 'đ';
+                const pImage = product.image;
+                
+                return `
+                <div class="book-card d-flex align-items-center gap-2 mt-2 mb-2 p-2 border rounded" style="background: #fdfdfd; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <img class="book-img" src="${pImage}" style="width: 45px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;" onclick="window.location.href='index.html'">
+                    <div style="flex-grow: 1; text-align: left;" onclick="window.location.href='index.html'">
+                        <div class="fw-bold text-dark" style="font-size: 12.5px; line-height: 1.2;">${pTitle}</div>
+                        <div class="text-danger fw-bold mt-1" style="font-size: 11.5px;">${pPrice}</div>
+                    </div>
+                    <button class="btn btn-sm p-1" onclick="addToCart(event, ${product.id})" style="border: none; background: transparent;">
+                        <i class="fas fa-cart-plus text-danger" style="font-size: 20px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></i>
+                    </button>
+                </div>
+                `;
+            }
+            return `<b>${p1}</b>`; // Không tìm thấy thì in đậm
+        });
+    }
+
+    div.innerHTML = `<div class="msg-bubble">${processedText}</div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+}
+
+function showTyping() {
+    const body = document.getElementById('aiChatBody');
+    const id = 'typing-' + Date.now();
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = `ai-message bot-msg`;
+    div.innerHTML = `<div class="msg-bubble typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return id;
+}

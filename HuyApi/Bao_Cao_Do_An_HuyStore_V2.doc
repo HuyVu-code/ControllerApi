@@ -1,0 +1,173 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Dự án Hệ thống Bán Sách HuyStore</title>
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.5; }
+  h1 { font-size: 16pt; font-weight: bold; text-transform: uppercase; }
+  h2 { font-size: 14pt; font-weight: bold; margin-top: 15px; }
+  h3 { font-size: 13pt; font-weight: bold; margin-top: 10px; }
+  p { text-align: justify; margin: 5px 0; }
+  ul { margin-top: 5px; margin-bottom: 5px; list-style-type: disc; }
+  li { text-align: justify; margin-bottom: 3px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; margin-bottom: 15px; }
+  th, td { border: 1px solid black; padding: 8px; text-align: left; }
+  th { font-weight: bold; background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+
+<p><b>Dự án:</b> Hệ thống Website Bán Sách Online (HuyStore E-commerce System)<br>
+<b>Phiên bản:</b> 2.0 (Tích hợp Thanh toán Tự động & AI Chatbot)<br>
+<b>Người thực hiện:</b> Vũ Hoàng Huy</p>
+<hr>
+
+<h2>1. TỔNG QUAN DỰ ÁN</h2>
+<p>Mục tiêu là xây dựng hệ thống website thương mại điện tử chuyên nghiệp giúp quản lý việc bán sách, giỏ hàng, thanh toán tự động và tư vấn khách hàng bằng AI, dựa trên công nghệ ASP.NET Core Web API và Vanilla JavaScript.</p>
+
+<h2>2. CÁC ĐỐI TƯỢNG NGƯỜI DÙNG</h2>
+<ul>
+    <li><b>Admin (Quản trị viên):</b> Quản lý kho sách, danh mục, cập nhật thông tin hệ thống và theo dõi, duyệt các đơn hàng.</li>
+    <li><b>Customer (Khách hàng):</b> Tra cứu sách, thêm vào giỏ hàng, tiến hành thanh toán trực tuyến và tra cứu thông tin qua Chatbot.</li>
+    <li><b>AI Chatbot (Hệ thống tự động):</b> Đóng vai trò nhân viên tư vấn ảo, phân tích ngôn ngữ tự nhiên để giải đáp thắc mắc và hiển thị gợi ý sách trực quan cho khách hàng.</li>
+</ul>
+
+<h2>3. YÊU CẦU CHỨC NĂNG (FUNCTIONAL REQUIREMENTS)</h2>
+
+<h3>3.1. Quản lý Sách & Danh mục (Book & Category)</h3>
+<ul>
+    <li><b>Dữ liệu:</b> ID sách, Tên sách, Tác giả, Thể loại, Hình ảnh (Image URL), Giá tiền, Số lượng.</li>
+    <li><b>Chức năng:</b>
+        <ul>
+            <li>Thực hiện đầy đủ CRUD (Thêm, Xóa, Sửa, Xem) cho Sách và Danh mục trên trang Admin.</li>
+            <li>Sử dụng ID (số) để liên kết bảng nhằm tối ưu bộ nhớ và dữ liệu.</li>
+            <li>Tìm kiếm sách theo tên, tác giả hoặc thể loại (có tính năng Autocomplete gợi ý nhanh).</li>
+            <li>Lọc sách động theo danh mục (Tâm Lý, Lịch Sử, Văn Học...) mà không cần tải lại trang (Single Page Application UX).</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>3.2. Quản lý Giỏ hàng và Đơn hàng (Cart & Order Management)</h3>
+<ul>
+    <li><b>Dữ liệu:</b> ID đơn hàng, Tên khách hàng, Số điện thoại, Địa chỉ, Tổng tiền, Trạng thái đơn hàng.</li>
+    <li><b>Chức năng:</b>
+        <ul>
+            <li>Thêm, bớt, xóa sản phẩm trong giỏ hàng (lưu trữ đồng bộ trên LocalStorage).</li>
+            <li>Khách hàng điền thông tin giao hàng và chọn phương thức thanh toán (COD hoặc Chuyển khoản QR).</li>
+            <li>Admin duyệt đơn hàng và thay đổi trạng thái giao hàng.</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>3.3. Quy trình Thanh toán Tự động (SePay Webhook Core Logic)</h3>
+<ul>
+    <li><b>Luồng Thanh toán:</b>
+        <ul>
+            <li>Khách hàng chọn phương thức Chuyển khoản qua ngân hàng (TPBank/MoMo).</li>
+            <li>Hệ thống tự động sinh mã QR động chứa đúng số tiền và cú pháp mã đơn hàng.</li>
+            <li>Hệ thống sử dụng cơ chế Polling API (quét mỗi 3 giây) để lắng nghe biến động số dư từ SePay API.</li>
+            <li>Khi có giao dịch chuyển vào khớp mã đơn, hệ thống cập nhật trạng thái đơn hàng thành "Đã thanh toán" và tự động chuyển hướng khách hàng sang màn hình thành công mà không cần thao tác thủ công.</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>3.4. Trợ lý ảo AI & Gợi ý sản phẩm trực quan (Dual-Brain Chatbot)</h3>
+<ul>
+    <li><b>Dữ liệu:</b> Lịch sử chat, Danh sách từ khóa NLP, Dữ liệu kho sách hiện tại.</li>
+    <li><b>Chức năng:</b>
+        <ul>
+            <li>Cung cấp giao diện chat lơ lửng góc phải màn hình chuẩn thiết kế Glassmorphism.</li>
+            <li>Sử dụng cơ chế Dual-Brain: Ưu tiên dùng Google Gemini AI, tự động Fallback sang Local NLP Algorithm khi API lỗi mạng.</li>
+            <li>Tự động nhận diện các từ khóa phân tích ngữ nghĩa ("giá rẻ", "lịch sử", "tâm lý") để lọc Database và render ra các thẻ HTML chứa Hình ảnh, Giá tiền, Tên sách và Nút Mua ngay trong khung chat.</li>
+        </ul>
+    </li>
+</ul>
+<hr>
+
+<h2>4. CẤU TRÚC DỮ LIỆU (DATABASE SCHEMA)</h2>
+<p>Hệ thống sử dụng SQL Server với các bảng quan hệ sau:</p>
+<table>
+    <tr>
+        <th>Bảng</th>
+        <th>Cột chính</th>
+        <th>Ghi chú</th>
+    </tr>
+    <tr>
+        <td>Books</td>
+        <td>ID, Title, Author, CategoryID, ImageUrl, Price, Quantity</td>
+        <td>Thông tin sách chi tiết</td>
+    </tr>
+    <tr>
+        <td>Categories</td>
+        <td>ID, Name, Description</td>
+        <td>Phân loại sách</td>
+    </tr>
+    <tr>
+        <td>Orders</td>
+        <td>ID, CustomerName, Phone, Address, TotalAmount, Status</td>
+        <td>Thông tin đơn đặt hàng tổng quát</td>
+    </tr>
+    <tr>
+        <td>OrderDetails</td>
+        <td>ID, OrderID, BookID, Quantity, UnitPrice</td>
+        <td>Chi tiết các sách trong từng đơn hàng</td>
+    </tr>
+</table>
+<hr>
+
+<h2>5. CÔNG NGHỆ & TRIỂN KHAI</h2>
+<ul>
+    <li><b>Back-end:</b> ASP.NET Core Web API.</li>
+    <li><b>Database:</b> SQL Server, Entity Framework Core (Code First).</li>
+    <li><b>Front-end:</b> HTML5, CSS3 (Bootstrap 5), JavaScript thuần (Fetch API).</li>
+    <li><b>AI Integration:</b> Google Gemini 1.5 API & Thuật toán Natural Language Processing nội bộ.</li>
+    <li><b>Payment Gateway:</b> SePay API (Tích hợp luồng Webhook quét biến động số dư ngân hàng theo thời gian thực).</li>
+    <li><b>API Documentation:</b> Swagger UI (quản lý và kiểm thử trực tiếp các Endpoints).</li>
+</ul>
+<hr>
+
+<h2>6. KỊCH BẢN KIỂM THỬ (TEST CASES)</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Chức năng</th>
+        <th>Các bước thực hiện</th>
+        <th>Kết quả mong đợi</th>
+    </tr>
+    <tr>
+        <td>TC01</td>
+        <td>Thêm giỏ hàng</td>
+        <td>Bấm nút "Thêm vào giỏ" ở 1 cuốn sách bất kỳ.</td>
+        <td>Giỏ hàng mini cập nhật số lượng, tổng tiền được tính lại chính xác.</td>
+    </tr>
+    <tr>
+        <td>TC02</td>
+        <td>Tìm kiếm Autocomplete</td>
+        <td>Nhập từ khóa "Tâm lý" vào thanh tìm kiếm.</td>
+        <td>Hiện box gợi ý 5 cuốn sách có chữ "Tâm lý" hoặc thuộc danh mục Tâm lý kèm hình ảnh.</td>
+    </tr>
+    <tr>
+        <td>TC03</td>
+        <td>Chatbot AI (Lọc sách)</td>
+        <td>Chat câu: "Tư vấn cho tui mấy cuốn sách giá rẻ đi".</td>
+        <td>AI bắt từ khóa "rẻ", sắp xếp và hiển thị 3 thẻ sách có giá thấp nhất kèm nút Mua.</td>
+    </tr>
+    <tr>
+        <td>TC04</td>
+        <td>Thanh toán QR tự động</td>
+        <td>Quét mã QR chuyển khoản đúng số tiền và mã ĐH trên trang Checkout.</td>
+        <td>Hệ thống Polling tự động phát hiện, màn hình báo "Thanh toán thành công" sau 3 giây và lưu đơn hàng.</td>
+    </tr>
+</table>
+<hr>
+
+<h2>7. GIAO DIỆN ỨNG DỤNG (DASHBOARD & STOREFRONT)</h2>
+<ul>
+    <li><b>Trang API (Swagger):</b> Hiển thị toàn bộ các Endpoint để kiểm tra luồng dữ liệu Backend.</li>
+    <li><b>Trang Cửa hàng (Storefront):</b> Giao diện mua sắm hiện đại với Slider đếm ngược, Sidebar danh mục, Giỏ hàng và Nút Chatbot AI.</li>
+    <li><b>Trang Thanh toán (Checkout):</b> Khu vực điền thông tin và hiển thị mã QR động.</li>
+    <li><b>Trang Quản lý (Admin Dashboard):</b> Phân chia rõ ràng thống kê tổng quan, quản lý Sách, Danh mục và Đơn hàng với các Pop-up Modal mượt mà.</li>
+</ul>
+
+</body>
+</html>

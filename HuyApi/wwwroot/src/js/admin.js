@@ -310,31 +310,42 @@ window.viewOrderDetails = function(id) {
     }
 
     // Danh sách sản phẩm
-    const itemsHtml = (order.items || []).map(item => `
-        <tr>
-            <td><div class="small fw-bold">${item.title}</div></td>
-            <td class="text-center">${item.qty}</td>
-            <td class="text-end small">${(item.price || 0).toLocaleString()}đ</td>
-            <td class="text-end fw-bold small">${((item.price || 0) * (item.qty || 0)).toLocaleString()}đ</td>
+    const itemsHtml = (order.items || []).map(item => {
+        // Tìm thông tin sách chi tiết từ bảng books
+        const b = books.find(x => (x.id || x.Id) == (item.id || item.bookId));
+        const author = b ? (b.author || b.Author) : "Đang cập nhật";
+        const desc = b ? (b.description || b.Description || "Không có mô tả chi tiết") : "Không có mô tả chi tiết";
+
+        return `
+        <tr class="border-bottom">
+            <td class="py-3">
+                <div class="fw-bold">${item.title}</div>
+                <div class="text-muted small mt-1"><i class="fas fa-user-edit me-1"></i> Tác giả: ${author}</div>
+                <div class="text-muted small mt-1" style="max-width: 300px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="${desc}"><i class="fas fa-info-circle me-1"></i> ${desc}</div>
+            </td>
+            <td class="text-center py-3 align-top">${item.qty}</td>
+            <td class="text-end small py-3 align-top">${(item.price || 0).toLocaleString()}đ</td>
+            <td class="text-end fw-bold small py-3 align-top text-danger">${((item.price || 0) * (item.qty || 0)).toLocaleString()}đ</td>
         </tr>
-    `).join('');
+    `}).join('');
     
     const itemsCont = document.getElementById('mdOrderItems');
     if (itemsCont) itemsCont.innerHTML = itemsHtml;
 
-    // Hiện Modal bằng CSS (Chắc chắn 100% hiện)
+    // Hiện Modal bằng Bootstrap 5 API
     const modalEl = document.getElementById('orderDetailModal');
     if (modalEl) {
-        modalEl.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Khóa cuộn trang
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
     }
 };
 
 window.closeOrderModal = function() {
     const modalEl = document.getElementById('orderDetailModal');
     if (modalEl) {
-        modalEl.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Mở lại cuộn trang
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+        else modalEl.style.display = 'none'; // Fallback
     }
 };
 
@@ -389,3 +400,49 @@ function showToast(msg, isError = false) {
 }
 
 window.logout = () => { localStorage.removeItem('currentUser'); window.location.href = '/login.html'; };
+
+// =============================================
+// LOGIC THÊM NGƯỜI DÙNG TỪ ADMIN
+// =============================================
+window.openUserModal = function() {
+    const form = document.getElementById('userForm');
+    if (!form) return;
+    form.reset();
+    document.getElementById('userId').value = '';
+    document.getElementById('userModalTitle').innerText = "Thêm người dùng mới";
+    new bootstrap.Modal(document.getElementById('userModal')).show();
+};
+
+const userForm = document.getElementById('userForm');
+if (userForm) {
+    userForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const payload = {
+            username: document.getElementById('userUsername').value,
+            email: document.getElementById('userEmail').value,
+            password: document.getElementById('userPassword').value,
+            role: document.getElementById('userRole').value,
+            isLocked: false
+        };
+
+        try {
+            const res = await fetch('/api/Users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                loadUsers();
+                showToast("Thêm tài khoản thành công!");
+            } else {
+                const data = await res.json();
+                showToast(data.message || "Lỗi khi thêm tài khoản!", true);
+            }
+        } catch (err) {
+            showToast("Không thể kết nối đến máy chủ", true);
+        }
+    };
+}
+

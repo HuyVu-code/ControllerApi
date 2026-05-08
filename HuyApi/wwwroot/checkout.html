@@ -347,8 +347,8 @@
                             <div class="method-dot"></div>
                         </div>
                         <div id="detail-momo" class="method-detail text-center">
-                            <p class="small fw-bold mb-3">Quét mã MoMo để hoàn tất thanh toán</p>
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=MOMO_HUYSTORE"
+                            <p class="small fw-bold mb-3">Quét mã MoMo để hoàn tất thanh toán (Đã kèm số tiền)</p>
+                            <img id="momoQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=MOMO"
                                 style="border: 4px solid #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                         </div>
 
@@ -356,19 +356,21 @@
                         <div class="method-btn" onclick="selectPay('bank', this)">
                             <div class="method-info">
                                 <i class="fas fa-university fs-4 text-dark" style="width:40px; text-align:center"></i>
-                                <span class="method-name">Chuyển khoản Ngân hàng</span>
+                                <span class="method-name">Chuyển khoản Ngân hàng (Quét QR tự động)</span>
                             </div>
                             <div class="method-dot"></div>
                         </div>
-                        <div id="detail-bank" class="method-detail">
-                            <div class="bank-card mb-2">
+                        <div id="detail-bank" class="method-detail text-center">
+                            <p class="small fw-bold mb-2">Sử dụng App Ngân hàng quét mã QR (tự động điền số tiền)</p>
+                            <img id="bankQrImage" src="" alt="VietQR" style="max-width: 220px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                            <div class="bank-card mb-2 text-start">
                                 <div><span class="text-muted small">STK:</span> <b id="bankAcc">0973457533</b></div>
                                 <button class="copy-btn" onclick="copyText('bankAcc')">SAO CHÉP</button>
                             </div>
-                            <div class="bank-card mb-2">
+                            <div class="bank-card mb-2 text-start">
                                 <div><span class="text-muted small">Ngân hàng:</span> <b>MB BANK</b></div>
                             </div>
-                            <div class="bank-card">
+                            <div class="bank-card text-start">
                                 <div><span class="text-muted small">Chủ TK:</span> <b>VU HOANG HUY</b></div>
                             </div>
                         </div>
@@ -452,6 +454,21 @@
             container.innerHTML = html;
             document.getElementById('subtotal').textContent = total.toLocaleString('vi-VN') + 'đ';
             document.getElementById('grandTotal').textContent = total.toLocaleString('vi-VN') + 'đ';
+
+            // Cập nhật QR Code động với số tiền
+            const bankQrImage = document.getElementById('bankQrImage');
+            if (bankQrImage && total > 0) {
+                // Mã BIN của MB Bank là 970422. Phải URL Encode các tham số có khoảng trắng
+                bankQrImage.src = `https://img.vietqr.io/image/970422-0973457533-compact2.png?amount=${total}&addInfo=ThanhToan&accountName=VU%20HOANG%20HUY`;
+            }
+
+            // Cập nhật mã QR MoMo động
+            const momoQrImage = document.getElementById('momoQrImage');
+            if (momoQrImage && total > 0) {
+                // Chuỗi QR định dạng chuyển tiền MoMo. Không dùng khoảng trắng để tránh lỗi decode
+                const momoData = `2|99|0973457533|||0|0|${total}|ThanhToan|transfer_myqr`;
+                momoQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(momoData)}`;
+            }
         }
 
         function selectPay(id, el) {
@@ -488,9 +505,30 @@
             };
             sessionStorage.setItem('latestOrder', JSON.stringify(orderData));
 
-            // Xóa giỏ hàng và chuyển trang
-            localStorage.removeItem('HuyStore_Cart');
-            window.location.href = 'order-success.html';
+            // Nếu là chuyển khoản hoặc MoMo, hiển thị mô phỏng chờ thanh toán
+            if (method.includes('Ngân hàng') || method.includes('MoMo')) {
+                const btn = document.querySelector('.btn-order');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> HỆ THỐNG ĐANG CHỜ NHẬN TIỀN...';
+                btn.disabled = true;
+                btn.style.background = '#ffc107';
+                btn.style.color = '#000';
+
+                // Giả lập sau 6 giây khách đã chuyển khoản xong
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> THANH TOÁN THÀNH CÔNG!';
+                    btn.style.background = '#28a745';
+                    btn.style.color = '#fff';
+                    
+                    setTimeout(() => {
+                        localStorage.removeItem('HuyStore_Cart');
+                        window.location.href = 'order-success.html';
+                    }, 1000);
+                }, 6000);
+            } else {
+                // Thanh toán COD thì chuyển trang luôn
+                localStorage.removeItem('HuyStore_Cart');
+                window.location.href = 'order-success.html';
+            }
         }
     </script>
 </body>

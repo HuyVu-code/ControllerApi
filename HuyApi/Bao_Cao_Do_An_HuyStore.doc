@@ -1,0 +1,96 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Báo cáo đồ án HuyStore</title>
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.5; }
+  h1 { font-size: 18pt; text-align: center; text-transform: uppercase; font-weight: bold; }
+  h2 { font-size: 15pt; font-weight: bold; margin-top: 24px; text-transform: uppercase; }
+  h3 { font-size: 14pt; font-weight: bold; margin-top: 16px; }
+  p { text-align: justify; margin: 8px 0; text-indent: 1.27cm; }
+  ul { margin-top: 5px; margin-bottom: 5px; }
+  li { text-align: justify; margin-bottom: 5px; }
+  .cover { text-align: center; margin-top: 150px; page-break-after: always; }
+  .cover-title { font-size: 24pt; font-weight: bold; color: #cc0000; margin-bottom: 20px; }
+  .cover-subtitle { font-size: 18pt; font-weight: bold; margin-bottom: 100px; }
+  .cover-info { font-size: 14pt; text-align: right; margin-right: 50px; line-height: 2; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+    <h1>TRƯỜNG ĐẠI HỌC ...</h1>
+    <h1>KHOA CÔNG NGHỆ THÔNG TIN</h1>
+    <br><br><br><br>
+    <div class="cover-title">BÁO CÁO ĐỒ ÁN MÔN HỌC</div>
+    <div class="cover-subtitle">ĐỀ TÀI: XÂY DỰNG WEBSITE BÁN SÁCH ONLINE HUYSTORE.VN TÍCH HỢP THANH TOÁN TỰ ĐỘNG VÀ AI CHATBOT</div>
+    <br><br><br><br>
+    <div class="cover-info">
+        <b>Sinh viên thực hiện:</b> Vũ Hoàng Huy<br>
+        <b>Mã sinh viên:</b> .......................<br>
+        <b>Lớp:</b> .......................<br>
+        <b>Giáo viên hướng dẫn:</b> .......................
+    </div>
+</div>
+
+<h2>LỜI MỞ ĐẦU</h2>
+<p>Trong kỷ nguyên công nghệ số 4.0, sự phát triển bùng nổ của Internet và thương mại điện tử đã làm thay đổi hoàn toàn thói quen mua sắm của người tiêu dùng. Thay vì phải đến tận cửa hàng truyền thống, người dùng ngày nay ưa chuộng sự tiện lợi, nhanh chóng của việc mua sắm trực tuyến. Đối với mặt hàng sách, việc xây dựng một không gian trực tuyến giúp độc giả dễ dàng tìm kiếm, tham khảo và mua sắm đang trở thành nhu cầu thiết yếu.</p>
+<p>Nắm bắt xu hướng đó, đồ án "Xây dựng Website bán sách online HuyStore.vn" được nghiên cứu và phát triển. Hệ thống không chỉ dừng lại ở việc đáp ứng các tính năng thương mại điện tử cơ bản (như xem sản phẩm, thêm vào giỏ hàng, quản trị), mà còn tiên phong ứng dụng các công nghệ hiện đại. Điểm nhấn lớn nhất của dự án là khả năng tự động hóa quy trình thanh toán qua ngân hàng thực tế bằng công nghệ Webhook (SePay API) và việc tích hợp Trợ lý ảo AI thông minh (AI Chatbot) có khả năng phân tích ngôn ngữ tự nhiên, giúp tự động tư vấn sách cho khách hàng một cách trực quan, sinh động.</p>
+
+<h2>CHƯƠNG 1: CƠ SỞ LÝ THUYẾT VÀ CÔNG NGHỆ SỬ DỤNG</h2>
+
+<h3>1.1. Tổng quan về kiến trúc hệ thống</h3>
+<p>Dự án được xây dựng dựa trên kiến trúc phần mềm Client-Server, tuân thủ nguyên tắc phân tách rõ ràng giữa giao diện người dùng (Frontend) và máy chủ xử lý logic (Backend). Việc áp dụng mô hình này giúp tăng cường tính bảo mật, khả năng bảo trì và dễ dàng mở rộng, nâng cấp hệ thống trong tương lai.</p>
+
+<h3>1.2. Công nghệ Backend (ASP.NET Core Web API)</h3>
+<p>Hệ thống Backend được phát triển bằng framework ASP.NET Core, ngôn ngữ C#. Đây là nền tảng mạnh mẽ do Microsoft phát triển, cung cấp hiệu năng cao và độ bảo mật tuyệt đối. Backend chịu trách nhiệm xử lý các yêu cầu từ Client, truy vấn cơ sở dữ liệu (SQL Server) thông qua Entity Framework Core, quản lý danh mục sách, đơn hàng và cung cấp các RESTful API chuẩn mực.</p>
+
+<h3>1.3. Công nghệ Frontend (HTML5, CSS3, JavaScript Vanilla)</h3>
+<p>Giao diện người dùng được xây dựng hoàn toàn dựa trên HTML5, CSS3 và Vanilla JavaScript nhằm đảm bảo tốc độ tải trang nhanh nhất mà không bị phụ thuộc vào các thư viện quá cồng kềnh. Giao diện được thiết kế theo chuẩn Responsive Design (tương thích trên mọi thiết bị di động và máy tính), kết hợp với thư viện Bootstrap 5 để xây dựng hệ thống Grid Layout, Modals và Card hiển thị sản phẩm trực quan, hiện đại theo phong cách Glassmorphism.</p>
+
+<h3>1.4. Tích hợp thanh toán tự động (SePay Webhook)</h3>
+<p>Hệ thống loại bỏ phương thức thanh toán thủ công truyền thống bằng việc tích hợp API từ SePay. Nhờ cơ chế Webhook và Polling, hệ thống có thể nhận diện biến động số dư từ tài khoản ngân hàng (TPBank) hoặc ví MoMo ngay lập tức. Khi khách hàng chuyển khoản đúng số tiền kèm mã đơn hàng, hệ thống tự động xác thực và cập nhật trạng thái đơn hàng thành "Đã thanh toán" chỉ trong vòng 3-5 giây.</p>
+
+<h3>1.5. Trí tuệ nhân tạo và Phân tích ngôn ngữ tự nhiên (NLP)</h3>
+<p>Web HuyStore.vn được tích hợp một Chatbot AI đột phá mang tên "HuyStore AI" hoạt động dựa trên cơ chế "Hệ thống 2 Não bộ" (Dual-Brain AI):</p>
+<ul>
+    <li><b>Não Cloud (Google Gemini API):</b> Kết nối trực tiếp với lõi ngôn ngữ lớn (LLM) của Google để trả lời thông minh, phân tích ngữ cảnh người dùng y hệt ChatGPT.</li>
+    <li><b>Não Local (Fallback NLP Algorithm):</b> Một hệ thống thuật toán tự code bằng JavaScript. Khi gọi API bị lỗi hoặc nghẽn mạng, não Local sẽ tự động tiếp quản. Nó có khả năng bắt các từ khóa ngữ nghĩa như "giá rẻ", "lịch sử", "tâm lý" để lập tức chui vào Database nội bộ, lọc ra đúng 3 cuốn sách rẻ nhất hoặc thuộc đúng danh mục để đưa ra gợi ý cho khách hàng.</li>
+</ul>
+
+<h2>CHƯƠNG 2: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG</h2>
+
+<h3>2.1. Phân tích chức năng hệ thống</h3>
+<p>Hệ thống HuyStore.vn được chia thành hai phân hệ người dùng chính: Khách hàng (Customer) và Quản trị viên (Admin).</p>
+<ul>
+    <li><b>Đối với Khách hàng:</b> Có thể tìm kiếm sách, xem chi tiết, thêm sách vào giỏ hàng, tương tác trò chuyện với Trợ lý AI để xin tư vấn, tiến hành đặt hàng và sử dụng mã QR động để thanh toán chuyển khoản.</li>
+    <li><b>Đối với Quản trị viên:</b> Đăng nhập vào trang Admin Dashboard để theo dõi các thông số thống kê tổng quan (doanh thu, số lượng đơn hàng). Cung cấp đầy đủ các chức năng CRUD (Thêm, Đọc, Sửa, Xóa) dành cho Sản phẩm và Danh mục. Đặc biệt là khả năng duyệt, xem chi tiết và quản lý trạng thái các đơn hàng từ khách.</li>
+</ul>
+
+<h3>2.2. Giao tiếp dữ liệu Frontend và Backend</h3>
+<p>Quá trình giao tiếp giữa Frontend và Backend diễn ra thông qua các API Endpoints. Cụ thể, khi trang chủ tải lên, mã JavaScript sẽ thực thi phương thức `fetch()` gọi đến endpoint `GET /api/Books` để lấy danh sách sách dạng JSON, sau đó tự động khởi tạo các thẻ Card HTML và đưa vào DOM. Quá trình gửi đơn hàng sử dụng `POST /api/Orders` kèm payload chứa thông tin người nhận và danh sách giỏ hàng.</p>
+
+<h2>CHƯƠNG 3: TRIỂN KHAI VÀ GIAO DIỆN THỰC TẾ</h2>
+
+<h3>3.1. Phân hệ Cửa hàng (Storefront)</h3>
+<p>Trang chủ được thiết kế nổi bật với các Banner Flash Sale đếm ngược. Hệ thống sách được bố trí theo hệ thống lưới Grid 4 cột đẹp mắt. Thanh Sidebar bên trái cho phép người dùng nhấp để lọc ngay lập tức sách theo thể loại (Tâm Lý, Văn Học, Kinh Tế...) mà không cần phải tải lại trang (Single Page Application UX).</p>
+
+<h3>3.2. Giỏ hàng và Thanh toán QR Tự động</h3>
+<p>Khi khách hàng chọn "Thêm vào giỏ", một Mini-cart sẽ hiện ra ở góc phải màn hình. Tại trang Thanh toán (Checkout), sau khi điền thông tin địa chỉ, màn hình sẽ hiển thị một mã QR Code động mang theo chính xác số tiền và mã đơn hàng. Một vòng lặp Polling chạy ngầm cứ 3 giây một lần sẽ hỏi Server xem "Tiền đã vào tài khoản anh Huy chưa?". Nếu tiền vào, màn hình lập tức đổi sang màu xanh báo "Thanh toán thành công!".</p>
+
+<h3>3.3. Bảng điều khiển Quản trị (Admin Panel)</h3>
+<p>Giao diện Admin mang phong cách hiện đại với thanh Menu trượt bên trái. Trung tâm màn hình là 4 khối màu thống kê trạng thái. Danh sách sản phẩm được trình bày dạng bảng (Table) có hỗ trợ phân trang (Pagination) mượt mà. Mọi thao tác Thêm/Sửa đều sử dụng Modal Bootstrap bật lên ngay tại trang, không bị giật lag.</p>
+
+<h3>3.4. Trợ lý AI và Dynamic Rendering Card</h3>
+<p>Đây là tính năng cốt lõi ấn tượng nhất của đồ án. Nút Chatbot AI lơ lửng góc phải. Khi khách yêu cầu: "Tư vấn cho tôi mấy cuốn sách lịch sử đi", thuật toán Local AI sẽ phân tích từ "lịch sử", tìm trong biến mảng `allProducts` những cuốn sách thuộc danh mục Lịch sử. Sau đó, thay vì chỉ trả về văn bản, Bot sẽ render trực tiếp mã HTML để vẽ ra những chiếc thẻ thu nhỏ chứa Hình ảnh, Tên sách, Giá tiền đỏ và nút Giỏ hàng ngay bên trong đoạn hội thoại chat.</p>
+
+<h2>CHƯƠNG 4: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</h2>
+
+<h3>4.1. Kết luận</h3>
+<p>Đồ án "Xây dựng Website bán sách online HuyStore.vn" đã hoàn thành xuất sắc các mục tiêu và yêu cầu được đặt ra từ ban đầu. Về mặt kỹ thuật, dự án là sự kết hợp hoàn hảo giữa nền tảng backend ASP.NET Core ổn định và frontend JavaScript hiện đại. Về mặt sáng tạo, dự án chứng minh được khả năng ứng dụng AI và Tự động hóa thanh toán ngân hàng vào thương mại điện tử, giúp giảm thiểu đáng kể chi phí vận hành nhân sự.</p>
+
+<h3>4.2. Hạn chế và Hướng phát triển</h3>
+<p>Bên cạnh các thành quả đạt được, hệ thống vẫn còn một số điểm có thể cải thiện như: cần nâng cấp cơ sở dữ liệu lên các hệ quản trị đám mây lớn hơn, bổ sung chức năng Gửi Email tự động cho khách hàng khi đặt hàng thành công. Trong tương lai, dự án có thể mở rộng tích hợp thêm công nghệ mã hóa bảo mật JWT cho tài khoản người dùng, cũng như xây dựng thuật toán Gợi ý sách cá nhân hóa (Recommendation System) dựa trên lịch sử mua sắm của từng khách hàng cụ thể.</p>
+
+</body>
+</html>

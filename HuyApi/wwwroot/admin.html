@@ -173,13 +173,44 @@
                 </div>
             </div>
 
+            <!-- TAB: Categories Management -->
+            <div id="tab-categories" class="content-tab d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold m-0">Quản lý thể loại</h4>
+                    <button class="btn btn-danger rounded-pill px-4" onclick="window.openCategoryModal()">
+                        <i class="fas fa-plus me-2"></i> Thêm thể loại
+                    </button>
+                </div>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">ID</th>
+                                    <th>Tên thể loại</th>
+                                    <th class="text-end pe-4">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCategoryTable">
+                                <!-- JS items -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- TAB: Users Management -->
             <div id="tab-users" class="content-tab d-none">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0">Quản lý người dùng</h4>
-                    <button class="btn btn-dark rounded-pill px-4" onclick="loadUsers()">
-                        <i class="fas fa-sync-alt me-2"></i> Làm mới danh sách
-                    </button>
+                    <div>
+                        <button class="btn btn-danger rounded-pill px-4 me-2" onclick="window.openUserModal()">
+                            <i class="fas fa-plus me-2"></i> Thêm người dùng
+                        </button>
+                        <button class="btn btn-dark rounded-pill px-4" onclick="loadUsers()">
+                            <i class="fas fa-sync-alt me-2"></i> Làm mới
+                        </button>
+                    </div>
                 </div>
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="table-responsive">
@@ -227,6 +258,44 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal Thêm Người dùng -->
+    <div class="modal fade" id="userModal" tabindex="-1" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold" id="userModalTitle">Thêm người dùng mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="userUsername" required placeholder="Nhập username...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Email</label>
+                            <input type="email" class="form-control" id="userEmail" required placeholder="Nhập địa chỉ email...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Mật khẩu</label>
+                            <input type="password" class="form-control" id="userPassword" required placeholder="Mật khẩu (ít nhất 6 ký tự)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Quyền hạn</label>
+                            <select class="form-select" id="userRole">
+                                <option value="user">Người dùng (User)</option>
+                                <option value="Admin">Quản trị viên (Admin)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold mt-2">TẠO TÀI KHOẢN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <!-- Modal Thêm/Sửa Sách -->
 <div class="modal fade" id="bookModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
